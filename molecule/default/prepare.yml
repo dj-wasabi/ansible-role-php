@@ -1,0 +1,20 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+
+  tasks:
+    - name: "Debian | Run apt-get update"
+      shell: apt-get update
+      when:
+        - ansible_os_family == 'Debian'
+
+    - name: "Debian | Installing packages"
+      apt:
+        name:
+          - python-apt
+          - apt-transport-https
+          - ca-certificates
+        state: present
+      when:
+        - ansible_os_family == 'Debian'

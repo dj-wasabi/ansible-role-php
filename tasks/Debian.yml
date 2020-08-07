@@ -1,0 +1,57 @@
+---
+- name: "Debian | Install gpg key"
+  apt_key:
+    url: https://packages.sury.org/php/apt.gpg
+    state: present
+  when:
+    - ansible_distribution == "Debian"
+
+- name: "Debian | Installing repository Debian"
+  apt_repository:
+    repo: "deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main"
+    state: present
+  when:
+    - ansible_distribution == "Debian"
+
+- name: "Debian | Installing repository Ubuntu"
+  apt_repository:
+    repo: "ppa:ondrej/php"
+    state: present
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: "Debian | Update apt cache"
+  apt:
+    update_cache: true
+    cache_valid_time: 86400
+
+- name: "Debian | Ensure PHP packages are installed"
+  apt:
+    name: "{{ php_packages + php_packages_extra }}"
+    state: "{{ php_packages_state }}"
+    install_recommends: "{{ php_install_recommends }}"
+  register: php_package_install
+  notify:
+    - restart webserver
+
+- name: "Debian | Delete APCu configuration file if this role will provide one"
+  file:
+    path: "{{ item }}/{{ php_apc_conf_filename }}"
+    state: absent
+  with_items: "{{ php_extension_conf_paths }}"
+  when:
+    - php_enable_apc
+    - php_package_install.changed
+  notify:
+    - restart webserver
+
+- name: "Debian | Delete OpCache configuration file if this role will provide one"
+  file:
+    path: "{{ item }}/{{ php_opcache_conf_filename }}"
+    state: absent
+  with_items: "{{ php_extension_conf_paths }}"
+  when:
+    - php_opcache_enable | bool
+    - php_package_install.changed
+  notify:
+    - restart webserver

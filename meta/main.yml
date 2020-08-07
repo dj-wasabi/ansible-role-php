@@ -3,7 +3,7 @@ dependencies: []
 
 galaxy_info:
   role_name: php
-  author: geerlingguy
+  author: wdijkerman
   description: PHP for RedHat/CentOS/Fedora/Debian/Ubuntu.
   company: "Midwestern Mac, LLC"
   license: "license (BSD, MIT)"

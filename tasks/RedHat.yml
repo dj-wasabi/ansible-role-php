@@ -1,0 +1,17 @@
+---
+- name: "RedHat | Install REMI repo"
+  yum:
+    name: "{{ ansible_rhn_repo }}"
+    state: present
+
+- name: "RedHat | Import REMI GPG key"
+  rpm_key:
+    key: "{{ ansible_rhn_repo_key }}"
+    state: present
+
+- name: "RedHat | Ensure PHP packages are installed"
+  package:
+    name: "{{ php_packages + php_packages_extra }}"
+    state: "{{ php_packages_state }}"
+  notify:
+    - restart webserver

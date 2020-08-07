@@ -6,18 +6,22 @@
     - files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
       skip: true
+
 - name: Set the default PHP version for Debian-based OSes.
   set_fact:
     php_default_version_debian: "{{ __php_default_version_debian }}"
-  when: ansible_os_family == 'Debian'
+  when:
+    - ansible_os_family == 'Debian'
+    - php_default_version_debian is not defined
 
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
-- name: Define php_packages.
+- name: "Define php_packages"
   set_fact:
     php_packages: "{{ __php_packages | list }}"
-  when: php_packages is not defined
+  when:
+    - php_packages is not defined
 
 - name: Define php_webserver_daemon.
   set_fact:
@@ -27,7 +31,8 @@
 - name: Define php_conf_paths.
   set_fact:
     php_conf_paths: "{{ __php_conf_paths }}"
-  when: php_conf_paths is not defined
+  when:
+    - php_conf_paths is not defined
 
 - name: Define php_extension_conf_paths.
   set_fact:
@@ -54,20 +59,16 @@
     php_fpm_conf_path: "{{ __php_fpm_conf_path }}"
   when: php_fpm_conf_path is not defined
 
+
 # Setup/install tasks.
-- include_tasks: setup-RedHat.yml
+- include_tasks: RedHat.yml
   when:
-    - not php_install_from_source
     - ansible_os_family == 'RedHat'
 
-- include_tasks: setup-Debian.yml
+- include_tasks: Debian.yml
   when:
-    - not php_install_from_source
     - ansible_os_family == 'Debian'
 
-# Install PHP from source when php_install_from_source is true.
-- include_tasks: install-from-source.yml
-  when: php_install_from_source
 
 # Configure PHP.
 - include_tasks: configure.yml
