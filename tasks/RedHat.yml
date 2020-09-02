@@ -2,6 +2,7 @@
 - name: "RedHat | Install REMI repo"
   yum:
     name: "{{ ansible_rhn_repo }}"
+    disable_gpg_check: "{{ ansible_rhn_repo_disable_gpg_check }}"
     state: present
 
 - name: "RedHat | Import REMI GPG key"

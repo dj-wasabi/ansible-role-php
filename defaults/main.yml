@@ -1,6 +1,7 @@
 ---
 
 ansible_rhn_repo: "http://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+ansible_rhn_repo_disable_gpg_check: False
 ansible_rhn_repo_key: "http://rpms.remirepo.net/RPM-GPG-KEY-remi"
 
 # Extra packages to install (in addition to distro-specific default lists).

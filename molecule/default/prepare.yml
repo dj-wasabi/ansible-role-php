@@ -5,7 +5,12 @@
 
   tasks:
     - name: "Debian | Run apt-get update"
-      shell: apt-get update
+      shell: apt-get clean && apt update && apt-get install -y python-apt
+      when:
+        - ansible_os_family == 'Debian'
+
+    - name: "Debian | Run apt-get update"
+      shell: apt upgrade -y apt
       when:
         - ansible_os_family == 'Debian'
 
